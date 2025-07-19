@@ -26,7 +26,10 @@ Route::prefix('vnpt-support')->group(function () {
 
 Route::prefix('/lich-lam-viec')->group(function () {
     Route::get('/', [ScheduleController::class, 'index'])->name('schedule.index');
+    Route::get('/data', [ScheduleController::class, 'getSchedules'])->name('schedule.data');
     Route::post('/', [ScheduleController::class, 'store'])->name('schedule.store');
+    Route::put('/{id}', [ScheduleController::class, 'update'])->name('schedule.update');
+    Route::delete('/{id}', [ScheduleController::class, 'destroy'])->name('schedule.destroy');
 });
 
 Route::get('/', [DashboardController::class, 'index']);

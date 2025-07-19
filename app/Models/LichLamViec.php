@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 class LichLamViec extends Model
 {
-    public function getLichLamViec()
+    public static function getLichLamViec()
     {
         return DB::table('lich_lam_viec')
             ->join('nhan_vien', 'nhan_vien.id_nhanvien', '=', 'lich_lam_viec.id_nhanvien')
@@ -21,10 +21,12 @@ class LichLamViec extends Model
                 'nhan_vien.trang_thai',
                 'tai_khoan.so_dien_thoai',
                 'tai_khoan.email',
+                'thoi_gian_lam_viec.id_thoi_gian_lam_viec',
                 'thoi_gian_lam_viec.ten_thoi_gian_lam_viec',
                 'thoi_gian_lam_viec.tg_bat_dau',
                 'thoi_gian_lam_viec.tg_ket_thuc',
+                'lich_lam_viec.id_lich_lam_viec',
                 'lich_lam_viec.ngay_lam',
-            ])->get();
+            ]);
     }
 }

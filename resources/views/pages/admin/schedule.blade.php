@@ -6,17 +6,16 @@
     <div class="container-fluid">
         <div class="card">
             <div class="card-header">
-                <button class="btn btn-success" onclick="showModal('#modal-add', 'Thêm lịch làm việc')">
+                <button class="btn btn-success" onclick="showModal('#modal-schedule', 'Thêm lịch làm việc')">
                     <i class="bi bi-calendar-plus me-2"></i>
                     <span>Thêm lịch làm việc</span>
                 </button>
             </div>
             <div class="card-body">
-                <table id="schedules-table"
+                <table id="schedule-table"
                        class="display nowrap w-100 table table-striped table-hover table-head-fixed table-bordered">
                     <thead>
                     <tr>
-                        <th>STT</th>
                         <th>Họ tên</th>
                         <th>Email</th>
                         <th>SĐT</th>
@@ -24,37 +23,20 @@
                         <th>Đơn vị</th>
                         <th>Ngày làm</th>
                         <th>Ca làm</th>
-                        <th>Thời gian bắt đầu - kết thúc</th>
+                        <th>Thời gian bắt đầu</th>
+                        <th>Thời gian kết thúc</th>
                         <th>Trạng thái</th>
                     </tr>
                     </thead>
                     <tbody>
-                    @foreach($schedules as $index=>$schedule)
-                        <tr>
-                            <td>{{$index + 1}}</td>
-                            <td>{{$schedule->ho_ten}}</td>
-                            <td>{{$schedule->email}}</td>
-                            <td>{{$schedule->so_dien_thoai}}</td>
-                            <td>{{$schedule->chuc_vu}}</td>
-                            <td>{{$schedule->don_vi}}</td>
-                            <td>{{\Carbon\Carbon::parse($schedule->ngay_lam)->format('d-m-Y')}}</td>
-                            <td>{{$schedule->ten_thoi_gian_lam_viec}}</td>
-                            <td>
-                                {{\Carbon\Carbon::parse($schedule->tg_bat_dau)->format('H:i')}}
-                                -
-                                {{\Carbon\Carbon::parse($schedule->tg_ket_thuc)->format('H:i')}}
-                            </td>
-                            <td>{{$schedule->trang_thai}}</td>
-                        </tr>
-                    @endforeach
                     </tbody>
                 </table>
             </div>
         </div>
 
         {{--    Modal add    --}}
-        <x-modal id="modal-add" title="Modal title">
-            <form id="form-add" method="POST">
+        <x-modal id="modal-schedule" title="Modal title">
+            <form id="form-schedule">
                 @csrf
                 <div class="mb-3">
                     <label for="id_nhanvien" class="form-label">Nhân viên</label>
@@ -86,7 +68,7 @@
                     </select>
                 </div>
                 <x-slot:footer>
-                    <button type="submit" form="form-add" class="btn btn-primary" id="modal-add-save">Lưu</button>
+                    <button type="submit" form="form-schedule" class="btn btn-primary">Lưu</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                 </x-slot:footer>
             </form>
@@ -95,23 +77,42 @@
     </div>
     <script>
         $(document).ready(function () {
-            $('#schedules-table').DataTable({
+            $('#schedule-table').DataTable({
+                processing: true,
+                serverSide: true,
                 responsive: true,
                 language: {
                     url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json'
                 },
+                ajax: '{{ route('schedule.data') }}',
+                columns: [
+                    {data: 'ho_ten'},
+                    {data: 'chuc_vu'},
+                    {data: 'don_vi'},
+                    {data: 'so_dien_thoai'},
+                    {data: 'email'},
+                    {data: 'ngay_lam'},
+                    {data: 'ten_thoi_gian_lam_viec'},
+                    {data: 'tg_bat_dau'},
+                    {data: 'tg_ket_thuc'},
+                    {data: 'trang_thai'},
+                    { data: 'action', orderable: false, searchable: false }
+                ],
                 layout: {
                     bottomEnd: {
                         paging: {
                             firstLast: false
                         }
                     }
-                }
+                },
             });
         });
 
+        let isUpdate = false;
+        let currentEditId = null;
+
         $(document).ready(function () {
-            $("#form-add").submit(function (e) {
+            $("#form-schedule").submit(function (e) {
                 e.preventDefault();
                 const data = {
                     _token: "{{ csrf_token() }}",
@@ -119,17 +120,25 @@
                     ngay_lam: $("#ngay_lam").val(),
                     id_thoi_gian_lam_viec: $("#id_thoi_gian_lam_viec").val()
                 };
+
+                let method = isUpdate ? "PUT" : "POST";
+                let url = isUpdate ? `/lich-lam-viec/${currentEditId}` : `{{ route('schedule.store') }}`;
+
                 $.ajax({
-                    type: "POST",
-                    url: "{{route('schedule.store')}}",
+                    type: method,
+                    url: url,
                     data: data,
                     dataType: "json",
                     cache: false,
                     success: function (response) {
                         if (response.status) {
-                            $('#modal-add').modal('hide');
-                            $('#form-add')[0].reset();
-                            window.location.reload()
+                            $('#modal-schedule').modal('hide');
+                            $('#form-schedule')[0].reset();
+                            $('#schedule-table').DataTable().ajax.reload();
+
+                            // Reset trạng thái về thêm mới
+                            isUpdate = false;
+                            currentEditId = null;
                         }
                     },
                     error: function (err) {
@@ -137,7 +146,45 @@
                     }
                 });
             });
+
+            $('#schedule-table').on('click', '.edit-btn', function () {
+                showModal('#modal-schedule', 'Cập nhật lịch làm việc');
+
+                const table = $('#schedule-table').DataTable();
+                const rowData = table.row($(this).closest('tr')).data();
+
+                currentEditId = rowData.id_lich_lam_viec;
+                isUpdate = true;
+
+                $('#id_nhanvien').val(rowData.id_nhanvien);
+                $('#ngay_lam').val(rowData.ngay_lam);
+                $('#id_thoi_gian_lam_viec').val(rowData.id_thoi_gian_lam_viec);
+            });
         });
+
+
+        $('#schedule-table').on('click', '.delete-btn', function () {
+            const id = $(this).data('id');
+
+            if (confirm('Bạn có chắc muốn xoá?')) {
+                $.ajax({
+                    url: `/lich-lam-viec/${id}`,
+                    type: 'DELETE',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function (response) {
+                        $('#schedule-table').DataTable().ajax.reload(null, false);
+                        alert('Xoá thành công!');
+                    },
+                    error: function (err) {
+                        console.error(err);
+                        alert('Lỗi xoá!');
+                    }
+                });
+            }
+        });
+
 
 
         function showModal(modalId, title = '') {
