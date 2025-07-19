@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="en">
-<!--begin::Head-->
-<head>
-    <link rel="icon" type="image/png" href="/assets/img/vnpt-logo.webp"/>
-    <meta name="csrf-token" content="{{ csrf_token() }}"/>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <!--begin::Head-->
+  <head>
+    <link rel="icon" type="image/png" href="{{ asset('assets/img/vnpt-logo.webp') }}" />
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>@yield('title')</title>
     <!--begin::Accessibility Meta Tags-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes"/>
@@ -26,9 +26,8 @@
     <!--end::Primary Meta Tags-->
     <!--begin::Accessibility Features-->
     <!-- Skip links will be dynamically added by accessibility.js -->
-    <meta name="supported-color-schemes" content="light dark"/>
-    <link rel="preload" href="./css/adminlte.css" as="style"/>
-    <link rel="stylesheet" href="{{asset('css/app.css')}}">
+    <meta name="supported-color-schemes" content="light dark" />
+    <link rel="preload" href="{{asset('css/adminlte.css')}}" as="style" />
     <!--end::Accessibility Features-->
     <!--begin::Fonts-->
     <link
@@ -56,7 +55,7 @@
     />
     <!--end::Third Party Plugin(Bootstrap Icons)-->
     <!--begin::Required Plugin(AdminLTE)-->
-    <link rel="stylesheet" href="./css/adminlte.css"/>
+    <link rel="stylesheet" href="{{asset('css/adminlte.css')}}" />
     <!--end::Required Plugin(AdminLTE)-->
     <!-- apexcharts -->
     <link
