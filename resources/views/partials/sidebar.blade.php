@@ -7,12 +7,13 @@
         <!--begin::Brand Link-->
         <a href="/" class="brand-link d-flex align-items-center">
             <!--begin::Brand Image-->
-            <img src="./assets/img/vnpt.jpg" alt="VNPT Logo" class="brand-image opacity-80 shadow rounded-circle me-0" />
+            <img src="./assets/img/vnpt.jpg" alt="VNPT Logo" class="brand-image opacity-80 shadow rounded-circle me-0"/>
             <!--end::Brand Image-->
 
             <!--begin::Brand Text-->
             <span class="brand-text">
-                <span class="fw-light font-custom text-info">VNPT</span><span class="fw-bold text-warning">Support</span>
+                <span class="fw-light font-custom text-info">VNPT</span><span
+                    class="fw-bold text-warning">Support</span>
             </span>
             <!--end::Brand Text-->
         </a>
@@ -52,7 +53,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="{{ route('schedule.index') }}" class="nav-link">
                         <i class="nav-icon bi bi-calendar-week text-success"></i>
                         <p>Lịch làm việc</p>
                     </a>
@@ -107,7 +108,7 @@
 
 <!--begin::Third Party Plugin(OverlayScrollbars)-->
 <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js"
-    crossorigin="anonymous"></script>
+        crossorigin="anonymous"></script>
 <!--end::Third Party Plugin(OverlayScrollbars)--><!--begin::Required Plugin(popperjs for Bootstrap 5)-->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" crossorigin="anonymous">
 </script>
@@ -123,7 +124,7 @@
         scrollbarAutoHide: 'leave',
         scrollbarClickScroll: true,
     };
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const sidebarWrapper = document.querySelector(SELECTOR_SIDEBAR_WRAPPER);
         if (sidebarWrapper && OverlayScrollbarsGlobal?.OverlayScrollbars !== undefined) {
             OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {

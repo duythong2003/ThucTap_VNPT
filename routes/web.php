@@ -6,6 +6,9 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\IncidentController;
+use App\Http\Controllers\ScheduleController;
+
+
 Route::prefix('vnpt-support')->group(function () {
     // Authentication routes
     Route::prefix('auth')->name('auth.')->group(function () {
@@ -19,6 +22,13 @@ Route::prefix('vnpt-support')->group(function () {
         Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
     });
 });
+
+
+Route::prefix('/lich-lam-viec')->group(function () {
+    Route::get('/', [ScheduleController::class, 'index'])->name('schedule.index');
+    Route::post('/', [ScheduleController::class, 'store'])->name('schedule.store');
+});
+
 Route::get('/', [DashboardController::class, 'index']);
 Route::post('/', [DashboardController::class, 'send']);
 Route::get('/incident-report', [IncidentController::class, 'index']);
