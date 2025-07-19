@@ -6,6 +6,7 @@ use App\Models\LichLamViec;
 use App\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 
 class ScheduleController extends Controller
@@ -38,14 +39,20 @@ class ScheduleController extends Controller
 
     public function store(Request $request)
     {
-        $id_nhanvien = $request->input('id_nhanvien');
-        $ngay_lam = $request->input('ngay_lam');
-        $id_thoi_gian_lam_viec = $request->input('id_thoi_gian_lam_viec');
+        $validator = Validator::make($request->all(), [
+            'id_nhanvien' => 'required|exists:nhan_vien,id_nhanvien',
+            'ngay_lam' => 'required|date|after_or_equal:today',
+            'id_thoi_gian_lam_viec' => 'required|exists:thoi_gian_lam_viec,id_thoi_gian_lam_viec',
+        ]);
+
+        if ($validator->fails()) {
+            return Response::error('Dữ liệu không hợp lệ !');
+        }
 
         DB::table('lich_lam_viec')->insert([
-            'id_nhanvien' => $id_nhanvien,
-            'id_thoi_gian_lam_viec' => $id_thoi_gian_lam_viec,
-            'ngay_lam' => $ngay_lam,
+            'id_nhanvien' => $request->input('id_nhanvien'),
+            'id_thoi_gian_lam_viec' => $request->input('id_thoi_gian_lam_viec'),
+            'ngay_lam' => $request->input('ngay_lam'),
         ]);
 
         return Response::success('', 'Thêm lịch làm việc thành công !', 200);

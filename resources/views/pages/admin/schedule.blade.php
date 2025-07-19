@@ -151,7 +151,8 @@
                         }
                     },
                     error: function (err) {
-                        console.log(err)
+                        const error = JSON.parse(err.responseText);
+                        toastr.error(error.message)
                     }
                 });
             });
