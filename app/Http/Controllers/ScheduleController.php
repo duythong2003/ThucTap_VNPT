@@ -28,8 +28,8 @@ class ScheduleController extends Controller
         return DataTables::of(LichLamViec::getLichLamViec())
             ->addColumn('action', function ($row) {
                 return '
-                <button class="btn btn-sm btn-primary edit-btn" data-id="' . $row->id_lich_lam_viec . '">Sửa</button>
-                <button class="btn btn-sm btn-danger delete-btn" data-id="' . $row->id_lich_lam_viec . '">Xoá</button>
+                <button class="btn btn-sm btn-primary edit-btn" data-id="' . $row->id_lich_lam_viec . '"><i class="bi bi-pen"></i></button>
+                <button class="btn btn-sm btn-danger delete-btn" data-id="' . $row->id_lich_lam_viec . '"><i class="bi bi-trash"></i></button>
             ';
             })
             ->rawColumns(['action'])

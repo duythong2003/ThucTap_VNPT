@@ -74,12 +74,20 @@
             </form>
         </x-modal>
 
+        <x-modal id="modal-delete" title="Xóa lịch làm việc">
+            <div class="text-danger">Bạn có chắc chắn xóa lịch làm việc không ?</div>
+            <x-slot:footer>
+                <button type="submit" id="confirm-delete" class="btn btn-primary">Xác nhận</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </x-slot:footer>
+        </x-modal>
+
     </div>
     <script>
         $(document).ready(function () {
             $('#schedule-table').DataTable({
                 processing: true,
-                serverSide: true,
+                serverSide: false,
                 responsive: true,
                 language: {
                     url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/vi.json'
@@ -96,7 +104,7 @@
                     {data: 'tg_bat_dau'},
                     {data: 'tg_ket_thuc'},
                     {data: 'trang_thai'},
-                    { data: 'action', orderable: false, searchable: false }
+                    {data: 'action', orderable: false, searchable: false}
                 ],
                 layout: {
                     bottomEnd: {
@@ -135,6 +143,7 @@
                             $('#modal-schedule').modal('hide');
                             $('#form-schedule')[0].reset();
                             $('#schedule-table').DataTable().ajax.reload();
+                            toastr.success(isUpdate ? 'Cập nhật thành công' : 'Thêm thành công')
 
                             // Reset trạng thái về thêm mới
                             isUpdate = false;
@@ -164,25 +173,27 @@
 
 
         $('#schedule-table').on('click', '.delete-btn', function () {
-            const id = $(this).data('id');
+            showModal('#modal-delete', 'Xóa lịch làm việc')
+            deleteId = $(this).data('id');
+            $('#confirm-delete').on('click', function () {
+                if (!deleteId) return;
 
-            if (confirm('Bạn có chắc muốn xoá?')) {
                 $.ajax({
-                    url: `/lich-lam-viec/${id}`,
+                    url: `/lich-lam-viec/${deleteId}`,
                     type: 'DELETE',
                     data: {
                         _token: '{{ csrf_token() }}'
                     },
                     success: function (response) {
                         $('#schedule-table').DataTable().ajax.reload(null, false);
-                        alert('Xoá thành công!');
+                        $('#modal-delete').modal('hide');
+                        toastr.success('Xóa thành công')
                     },
                     error: function (err) {
                         console.error(err);
-                        alert('Lỗi xoá!');
                     }
                 });
-            }
+            });
         });
 
 
